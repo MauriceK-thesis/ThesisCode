@@ -11,52 +11,13 @@ options(scipen=999)
 #####################################################################################################################################################################################
 ####################################################################### scenario 1 ############################################################################################
 
-## Partial correlations of all factors without precipitation as confounder -- 2021 dataset
-fullTable2021 <- read.csv("correlation/allVariables/basicFullTable2021.csv")
-meanVariables2021 <- read.csv("correlation/allVariables/meanVariablePerRes2021Separated.csv", sep = ";")
-meanVariables2021 <- meanVariables2021 %>% na.omit()
-
-
-## Partial correlations of all factors without precipitation as confounder -- Total dataset
-fullTableTotal <- read.csv("correlation/allVariables/basicFullTableTotal.csv")
-meanVariablesTotal <- read.csv("correlation/allVariables/meanVariablePerResTotalSeparated.csv", sep = ";")
-meanVariablesTotal <- meanVariablesTotal %>% na.omit()
-
-
-resolutionPlot2021 <- ggplot(meanVariables2021, aes(x= as.factor(variableType), y = r, fill = as.factor(resolution))) +  
-  geom_col(position = "dodge") +
-  scale_x_discrete(limits=c("waterArea", "distance")) +
-  scale_y_continuous(limits=c(-0.15, 0.15)) +
-  ylab("partial correlation r") + xlab("Variable type") +
-  labs(title = "(a) Effect of resolution on water statistics (2021)") + 
-  scale_fill_manual(values=c("#101010", "#404240", "#707371", "#a1a4a2", "#d3d4d3"), name = "Resolution (m)") + 
-  theme_classic() +
-  theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") 
-
-resolutionPlotTotal <- ggplot(meanVariablesTotal, aes(x= as.factor(variableType), y = r, fill = as.factor(resolution))) +  
-  geom_col(position = "dodge") +
-  scale_x_discrete(limits=c("waterArea", "distance")) +
-  scale_y_continuous(limits=c(-0.15, 0.15)) +
-  ylab("partial correlation r") + xlab("Variable type") +
-  labs(title = "(b) Effect of resolution on water statistics (Total)") + 
-  scale_fill_manual(values=c("#101010", "#404240", "#707371", "#a1a4a2", "#d3d4d3"), name = "Resolution (m)") + 
-  theme_classic() +
-  theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") 
-
-
-grid.arrange(resolutionPlot2021, resolutionPlotTotal, ncol = 2, nrow =1)
-
 fullTable2021 <- read.csv("correlation/allVariables/basicFullTable2021.csv")
 
+# Give an individual number to significant and nonsignificant codes 
 fullTable2021$p[fullTable2021$p >= 0.05] <- 2 
 fullTable2021$p[fullTable2021$p <= 0.05] <- 1 
 
-
-## remove all non significant or NA relations  
-fullTable2021 <- fullTable2021 %>% na.omit()
-fullTable2021 <- fullTable2021 %>% filter(p <= 0.05)
-
-fullTableBuffer2021 <- fullTable2021 %>% filter(bufferSize >= 50)
+# only take the variables of the highest resolution 
 variableList <- c("waterArea", "distance20", "total_precipitation", "waterBodies")
 fullTableBuffer2021 <- fullTable2021 %>% filter(variableType %in% variableList)
 
@@ -111,17 +72,13 @@ ggp4 <- ggplot(filter(fullTableBuffer2021, persistence == 90), aes(x= reorder(bu
 
 grid.arrange(ggp0, ggp1, ggp2, ggp3, ggp4, as_ggplot(legend1), ncol = 2, nrow =3)
 
+# legend has to be added to the first plot (ggp0), then taken out again and put in the 6th position
 legend1 <- get_legend(ggp0)
-## Partial correlations of all factors without precipitation as confounder -- 2021 dataset
+
+## now do the same for the total dataset, legend can remain the same
+## Partial correlations of all factors without precipitation as confounder -- total dataset
 fullTableTotal <- read.csv("correlation/allVariables/basicFullTableTotal.csv")
-fullTableTotal <- fullTableTotal %>% na.omit()
-fullTableTotal <- fullTableTotal %>% filter(p <= 0.05)
 
-meanVariablesTotal <- read.csv("correlation/allVariables/meanVariablePerResTotal.csv")
-meanVariablesTotal <- cbind(df, meanVariablesTotal)
-
-
-fullTableBufferTotal <- fullTableTotal %>% filter(bufferSize >= 1000)
 variableList <- c("waterArea", "distance20", "total_precipitation", "waterBodies")
 fullTableBufferTotal <- fullTableTotal %>% filter(variableType %in% variableList)
 
@@ -239,7 +196,7 @@ grid.arrange(ggp1, ggp2, ggp3, ggp4, as_ggplot(legend), ncol = 2, nrow =3)
 legend <- get_legend(ggp1)
 
 ################################################################################################################################################################################################################################
-## create the graphs for the second scenario where precipitation is a confounder of water 
+## create the graphs for the second scenario where precipitation is a confounder of water, but for the total dataset
 scen2FullTabletotal <- read.csv("correlation/total_Pf/scenario2All_total_Pf.csv", sep = ";")
 variableListScen2 <- c("distance20", "distance500", "distance1000", "distance5000")
 scen2FullTabletotal$p[scen2FullTabletotal$p >= 0.05] <- 2 
