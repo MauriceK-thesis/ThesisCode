@@ -1,5 +1,8 @@
 # ThesisCode
-# This is a repository of the different scripts used. Below are the links to the online scripts in Google Earth Engine.
+# This is a repository of the different scripts used. 
+Above are the scripts used in R, as well as all predictor variables that need to be ingested into the machine learning models
+
+# Below are the links to the online scripts in Google Earth Engine.
 
 Link to 2021 surface water map: 
 
